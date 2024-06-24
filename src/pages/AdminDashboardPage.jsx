@@ -6,11 +6,16 @@ import { FaArrowUp } from "react-icons/fa6";
 import {} from "../";
 import MkdSDK from "../utils/MkdSDK";
 import { showToast, GlobalContext } from "../globalContext";
+import { tokenExpireError, AuthContext } from "../authContext";
+import { useNavigate } from "react-router";
 
 const AdminDashboardPage = () => {
   const [videos, setVideos] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const { dispatch: toastDispatch } = React.useContext(GlobalContext);
+  const { dispatch } = React.useContext(AuthContext);
+  const navigate = useNavigate();
+
   let sdk = new MkdSDK();
 
   const handleVideo = async (page = 1, limit = 10) => {
@@ -25,7 +30,24 @@ const AdminDashboardPage = () => {
     }
   };
 
+  const handleLogout = async () => {
+    dispatch({ type: "LOGOUT" });
+    navigate("/admin/login");
+  };
+
+  const checkTokenMessage = async () => {
+    const role = localStorage.getItem("role");
+    try {
+      const res = await sdk(role);
+      return res.message;
+    } catch (error) {
+      return error;
+    }
+  };
+
   useEffect(() => {
+    const message = checkTokenMessage();
+    tokenExpireError(dispatch, message);
     handleVideo(currentPage);
     window.scrollTo(0, 0);
   }, [currentPage]);
@@ -36,7 +58,10 @@ const AdminDashboardPage = () => {
         {/* header */}
         <div className="header flex justify-between items-center gap-5 mb-5">
           <h1 className="text-5xl font-extrabold">APP</h1>
-          <button className="bg-primary hover:bg-secondary transition-colors duration-500 text-text-secondary py-3 px-6 rounded-full flex gap-2 justify-center items-center">
+          <button 
+            className="bg-primary hover:bg-secondary transition-colors duration-500 text-text-secondary py-3 px-6 rounded-full flex gap-2 justify-center items-center"
+            onClick={() => {handleLogout()}}
+          >
             <FiUser />
             <span>Logout</span>
           </button>
