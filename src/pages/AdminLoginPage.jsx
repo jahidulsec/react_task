@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -15,7 +15,7 @@ const AdminLoginPage = () => {
     })
     .required();
 
-  const { dispatch } = React.useContext(AuthContext);
+  const { state ,dispatch } = React.useContext(AuthContext);
   const { dispatch: toastDispatch } = React.useContext(GlobalContext);
   const navigate = useNavigate();
   const {
@@ -27,18 +27,27 @@ const AdminLoginPage = () => {
     resolver: yupResolver(schema),
   });
 
+  useEffect(() => {
+    console.log(state)
+  }, [state])
+
   const onSubmit = async (data) => {
     let sdk = new MkdSDK();
     //TODO
     try {
-      const res = await sdk.login(data.email, data.password, 'admin')
-      console.log(res.token)
+      const res = await sdk.login(data.email, data.password, "admin");
 
-      localStorage.setItem('token', res.token)
-      showToast(toastDispatch, "Successfully logged in!")
+      localStorage.setItem("token", res.token);
+      localStorage.setItem("role", res.role);
 
+      showToast(toastDispatch, "Successfully logged in!");
+      
+      dispatch({
+        type: "LOGIN",
+        payload: { user: res.user_id, token: res.token, role: res.role },
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 

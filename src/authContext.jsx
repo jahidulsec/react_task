@@ -15,7 +15,10 @@ const reducer = (state, action) => {
     case "LOGIN":
       //TODO
       return {
-        ...state,
+        isAuthenticated: true,
+        user: action.payload.user,
+        token: action.payload.token,
+        role: action.payload.role
       };
     case "LOGOUT":
       localStorage.clear();
@@ -30,6 +33,16 @@ const reducer = (state, action) => {
 };
 
 let sdk = new MkdSDK();
+
+const checkTokenMessage = async() => {
+  const role = localStorage.getItem("role");
+  try {
+    const res = await sdk(role)
+    return res.message
+  } catch (error) {
+    return error
+  }
+}
 
 export const tokenExpireError = (dispatch, errorMessage) => {
   const role = localStorage.getItem("role");
@@ -46,6 +59,8 @@ const AuthProvider = ({ children }) => {
 
   React.useEffect(() => {
     //TODO
+    const message = checkTokenMessage()
+    tokenExpireError(dispatch, message)
   }, []);
 
   return (
