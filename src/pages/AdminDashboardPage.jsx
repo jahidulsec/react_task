@@ -17,7 +17,7 @@ import TableCell from "../components/TableCell";
 
 
 const AdminDashboardPage = () => {
-  const [videos, setVideos] = useState([]);
+  const [videos, setVideos] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const { dispatch: toastDispatch } = React.useContext(GlobalContext);
   const { dispatch } = React.useContext(AuthContext);
