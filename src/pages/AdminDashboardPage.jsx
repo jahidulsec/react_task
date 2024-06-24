@@ -99,7 +99,7 @@ const AdminDashboardPage = () => {
           {/* datetime statue */}
           <div className="flex justify-center items-center gap-2 bg-item-bg py-4 px-6 rounded-xl font-thin">
             {/* date */}
-            <div className="date">30 May 2022</div>
+            <div className="date">{new Intl.DateTimeFormat(['ban', 'id'], {dateStyle: 'medium'}).format(new Date())}</div>
 
             <LuDot />
 
@@ -110,7 +110,7 @@ const AdminDashboardPage = () => {
             <LuDot />
 
             {/* time */}
-            <div className="time">11:34</div>
+            <div className="time">{new Intl.DateTimeFormat(['ban', 'id'], {timeStyle: 'short'}).format(new Date())}</div>
           </div>
         </div>
 
