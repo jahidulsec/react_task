@@ -28,6 +28,14 @@ const AdminLoginPage = () => {
   const onSubmit = async (data) => {
     let sdk = new MkdSDK();
     //TODO
+    try {
+      const res = await sdk.login(data.email, data.password, 'admin')
+      console.log(res.token)
+
+      localStorage.setItem('token', res.token)
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (

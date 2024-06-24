@@ -15,13 +15,14 @@ export default function MkdSDK() {
   
   this.login = async function (email, password, role) {
     //TODO
+    const obj = {email: email, password: password, role: role}
     const response = await fetch(this._baseurl + '/v2/api/lambda/login', {
       method: 'POST',
       headers :{
         "Content-Type": "application/json",
         "x-project": base64Encode,
       },
-      body: JSON.stringify(email, password, role)
+      body: JSON.stringify(obj)
     })
 
     const data = await response.json()
@@ -115,7 +116,7 @@ export default function MkdSDK() {
         "x-project": base64Encode,
         Authorization: "Bearer " + localStorage.getItem("token"),
       },
-      body: JSON.stringify(role)
+      body: JSON.stringify({role: role})
     })
 
     const data = response.json()
