@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AuthContext } from "./authContext";
 import { Routes, Route, Navigate } from "react-router-dom";
 import SnackBar from "./components/SnackBar";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import './index.css'
 
 function renderRoutes(role) {
   switch (role) {
@@ -32,11 +33,15 @@ function renderRoutes(role) {
 function Main() {
   const { state } = React.useContext(AuthContext);
 
+  useEffect(() => {
+    console.log(state)
+  }, [state])
+
   return (
     <div className="h-full">
       <div className="flex w-full">
         <div className="w-full">
-          <div className="page-wrapper w-full py-10 px-5">
+          <div className="page-wrapper w-full py-10 px-20 bg-bg text-text-default min-h-screen">
             {!state.isAuthenticated
               ? renderRoutes("none")
               : renderRoutes(state.role)}

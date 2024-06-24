@@ -31,6 +31,13 @@ const AdminLoginPage = () => {
     console.log(state)
   }, [state])
 
+  const handleAuthInfo = (res) => {
+    dispatch({
+      type: "LOGIN",
+      payload: { user: res.user_id, token: res.token, role: res.role },
+    });
+  }
+
   const onSubmit = async (data) => {
     let sdk = new MkdSDK();
     //TODO
@@ -41,11 +48,9 @@ const AdminLoginPage = () => {
       localStorage.setItem("role", res.role);
 
       showToast(toastDispatch, "Successfully logged in!");
+      handleAuthInfo(res)
+      navigate('/admin/dashboard')
       
-      dispatch({
-        type: "LOGIN",
-        payload: { user: res.user_id, token: res.token, role: res.role },
-      });
     } catch (error) {
       console.log(error);
     }
