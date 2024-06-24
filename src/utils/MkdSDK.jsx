@@ -15,6 +15,26 @@ export default function MkdSDK() {
   
   this.login = async function (email, password, role) {
     //TODO
+    const response = await fetch(this._baseurl + '/v2/api/lambda/login', {
+      method: 'POST',
+      headers :{
+        "Content-Type": "application/json",
+        "x-project": base64Encode,
+      },
+      body: JSON.stringify(email, password, role)
+    })
+
+    const data = await response.json()
+
+    if (response.status === 401) {
+      throw new Error(data.message);
+    }
+
+    if (response.status === 403) {
+      throw new Error(data.message);
+    }
+    return data;
+
   };
 
   this.getHeader = function () {
@@ -88,6 +108,26 @@ export default function MkdSDK() {
 
   this.check = async function (role) {
     //TODO
+    const response = await fetch(this._baseurl + '/v2/api/lambda/check', {
+      method: 'POST',
+      header :{
+        "Content-Type": "application/json",
+        "x-project": base64Encode,
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+      body: JSON.stringify(role)
+    })
+
+    const data = response.json()
+
+    if (response.status === 401) {
+      throw new Error(data.message);
+    }
+
+    if (response.status === 403) {
+      throw new Error(data.message);
+    }
+    return data;
   };
 
   return this;
