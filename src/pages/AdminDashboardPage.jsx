@@ -2,15 +2,22 @@ import React, { useEffect, useState } from "react";
 import { FiUser } from "react-icons/fi";
 import { LuDot } from "react-icons/lu";
 import { FaChevronDown } from "react-icons/fa";
-import { FaArrowUp } from "react-icons/fa6";
-import {} from "../";
 import MkdSDK from "../utils/MkdSDK";
 import { showToast, GlobalContext } from "../globalContext";
 import { tokenExpireError, AuthContext } from "../authContext";
 import { useNavigate } from "react-router";
+import {
+  SortableContext,
+  arrayMove,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { DndContext, closestCorners } from "@dnd-kit/core";
+import TableCell from "../components/TableCell";
+
+
 
 const AdminDashboardPage = () => {
-  const [videos, setVideos] = useState();
+  const [videos, setVideos] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const { dispatch: toastDispatch } = React.useContext(GlobalContext);
   const { dispatch } = React.useContext(AuthContext);
@@ -24,7 +31,7 @@ const AdminDashboardPage = () => {
         { page: page, limit: limit },
         "PAGINATE",
       );
-      setVideos(res);
+      setVideos(res.list);
     } catch (error) {
       showToast(toastDispatch, error);
     }
@@ -45,6 +52,22 @@ const AdminDashboardPage = () => {
     }
   };
 
+  const getVideoPos = id => videos.findIndex(item => item.id === id)
+
+  const handleDragEnd = (event) => {
+    const {active, over} = event
+
+    if(active.id === over.id) return;
+
+    setVideos((item) => {
+      const originalPos = getVideoPos(active.id)
+      const newPos = getVideoPos(over.id)
+
+      return arrayMove(videos, originalPos, newPos)
+    })
+    
+  }
+
   useEffect(() => {
     const message = checkTokenMessage();
     tokenExpireError(dispatch, message);
@@ -58,9 +81,11 @@ const AdminDashboardPage = () => {
         {/* header */}
         <div className="header flex justify-between items-center gap-5 mb-5">
           <h1 className="text-5xl font-extrabold">APP</h1>
-          <button 
+          <button
             className="bg-primary hover:bg-secondary transition-colors duration-500 text-text-secondary py-3 px-6 rounded-full flex gap-2 justify-center items-center"
-            onClick={() => {handleLogout()}}
+            onClick={() => {
+              handleLogout();
+            }}
           >
             <FiUser />
             <span>Logout</span>
@@ -102,38 +127,22 @@ const AdminDashboardPage = () => {
         </div>
 
         {/* table body */}
-        <div className="table-body flex flex-col gap-5">
-          {videos !== undefined &&
-            videos.list.map((item) => (
-              <div className="grid-container font-thin justify-center items-center border hover:bg-bg-secondary border-border hover:border-border-hover rounded-xl py-5 px-4 transition-all duration-500">
-                <div className="text-[17px]">{item.id}</div>
-                <div className="relative flex items-center gap-5">
-                  <img
-                    src={item.photo}
-                    alt="image"
-                    width={118}
-                    height={64}
-                    className="w-[118px] h-[64px] object-cover object-top rounded-md"
-                  />
-                  <span className="text-xl font-thin max-w-[364px]">
-                    {item.title}
-                  </span>
-                </div>
-                <div className="avatar flex gap-2 items-center">
-                  <img
-                    src={"/image.png"}
-                    alt="avatar"
-                    className="w-[24px] aspect-square rounded-full"
-                  />
-                  <p className=" text-secondary">{item.username}</p>
-                </div>
-                <div className="flex items-center gap-2 justify-end">
-                  <span>{item.like}</span>
-                  <FaArrowUp className=" text-primary" />
-                </div>
-              </div>
-            ))}
-        </div>
+        <DndContext
+          collisionDetection={closestCorners}
+          onDragEnd={handleDragEnd}
+        >
+          <div className="table-body flex flex-col gap-5">
+            {videos !== undefined && (
+              <SortableContext
+                items={videos}
+                strategy={verticalListSortingStrategy}
+              >
+                {videos !== undefined &&
+                  videos.map((item) => <TableCell item={item} />)}
+              </SortableContext>
+            )}
+          </div>
+        </DndContext>
 
         {/* pagination */}
         {videos !== undefined && (

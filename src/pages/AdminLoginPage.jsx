@@ -28,8 +28,8 @@ const AdminLoginPage = () => {
   });
 
   useEffect(() => {
-    console.log(state)
-  }, [state])
+    localStorage.clear()
+  }, [])
 
   const handleAuthInfo = (res) => {
     dispatch({
