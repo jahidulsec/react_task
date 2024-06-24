@@ -32,19 +32,21 @@ function renderRoutes(role) {
 
 function Main() {
   const { state } = React.useContext(AuthContext);
+  
 
-  useEffect(() => {
-    console.log(state)
-  }, [state])
+
+  
 
   return (
     <div className="h-full">
       <div className="flex w-full">
         <div className="w-full">
           <div className="page-wrapper w-full py-10 px-20 bg-bg text-text-default min-h-screen">
-            {!state.isAuthenticated
+            {/* {!state.isAuthenticated */}
+            {!true
               ? renderRoutes("none")
-              : renderRoutes(state.role)}
+              // : renderRoutes(state.role)}
+              : renderRoutes('admin')}
           </div>
         </div>
       </div>

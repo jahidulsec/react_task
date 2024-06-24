@@ -59,8 +59,6 @@ const AuthProvider = ({ children }) => {
 
   React.useEffect(() => {
     //TODO
-    const message = checkTokenMessage()
-    tokenExpireError(dispatch, message)
   }, []);
 
   return (
