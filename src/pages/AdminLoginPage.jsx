@@ -5,6 +5,7 @@ import * as yup from "yup";
 import MkdSDK from "../utils/MkdSDK";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../authContext";
+import { showToast, GlobalContext } from "../globalContext";
 
 const AdminLoginPage = () => {
   const schema = yup
@@ -15,6 +16,7 @@ const AdminLoginPage = () => {
     .required();
 
   const { dispatch } = React.useContext(AuthContext);
+  const { dispatch: toastDispatch } = React.useContext(GlobalContext);
   const navigate = useNavigate();
   const {
     register,
@@ -33,6 +35,8 @@ const AdminLoginPage = () => {
       console.log(res.token)
 
       localStorage.setItem('token', res.token)
+      showToast(toastDispatch, "Successfully logged in!")
+
     } catch (error) {
       console.log(error)
     }
